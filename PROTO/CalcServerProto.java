@@ -4,12 +4,6 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-/**
- * Servidor TCP da calculadora utilizando Protocol Buffers.
- *
- * As mensagens são definidas em calculator.proto e convertidas
- * para classes Java pelo compilador protoc.
- */
 public class CalcServerProto {
 
     private static final int PORT = 5000;
@@ -35,10 +29,6 @@ public class CalcServerProto {
                                 + clientSocket.getPort()
                 );
 
-                /*
-                 * Mesmo requisito da Parte 2:
-                 * cada cliente é atendido em sua própria thread.
-                 */
                 Thread clientThread = new Thread(
                         () -> handleClient(clientSocket)
                 );
@@ -64,22 +54,12 @@ public class CalcServerProto {
         ) {
 
             while (true) {
-
-                /*
-                 * parseDelimitedFrom lê uma mensagem protobuf
-                 * precedida pelo seu tamanho.
-                 *
-                 * Retorna null quando a conexão é encerrada
-                 * normalmente pelo cliente.
-                 */
                 CalculatorProto.CalcRequest request =
                         CalculatorProto.CalcRequest
                                 .parseDelimitedFrom(input);
-
                 if (request == null) {
                     break;
                 }
-
                 System.out.printf(
                         "[%s] Req %d: %.2f %s %.2f%n",
                         Thread.currentThread().getName(),
@@ -92,10 +72,6 @@ public class CalcServerProto {
                 CalculatorProto.CalcResponse response =
                         processRequest(request);
 
-                /*
-                 * writeDelimitedTo escreve o tamanho
-                 * da mensagem e depois o conteúdo protobuf.
-                 */
                 response.writeDelimitedTo(output);
                 output.flush();
 
